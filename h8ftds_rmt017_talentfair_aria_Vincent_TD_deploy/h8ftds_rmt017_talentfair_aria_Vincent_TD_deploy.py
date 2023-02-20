@@ -1,9 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.express as px
 from PIL import Image
 import pickle
 
@@ -30,20 +26,7 @@ def run():
     image = Image.open('aria.jpg')
     st.image(image, caption='aria agriculture')
 
-    # subheader
-    st.subheader('EXPLORATORY DATA ANALYSIS')
-
-    # Import dataframe
-    data = pd.read_excel('aria_data.xlsx')
-
-    # Histogram
-    pilihan = st.selectbox('Silakan pilih kolom di bawah ini untuk lihat histogramnya:', 
-    ('v1','v2','v3','v4','v5','v6','v7','v8'))
-    fig = plt.figure(figsize=(15,5))
-    sns.histplot(data[pilihan],bins=30,kde=True)
-    st.pyplot(fig)
-
-
+    
     with st.form(key='form_parameters'):
       v1 = st.number_input('v1', min_value=0, max_value=10000, value=537)
       v2 = st.number_input('v2', min_value=0, max_value=10000, value=207)
@@ -53,11 +36,11 @@ def run():
       v6 = st.number_input('v6', min_value=0, max_value=10000, value=218)
       v7 = st.number_input('v7', min_value=0, max_value=10000, value=646)
       v8 = st.number_input('v8', min_value=0, max_value=10000, value=4274)
-      st = st.selectbox('sample type', ('Lab 1' , 'Lab 2'), index=1)
+      sample_type = st.number_input('v8', min_value=0, max_value=100, value=2)
 
       st.markdown('---')
 
-      submitted = st.form_submit_button('Predict Target')
+      submitted = st.form_submit_button('Predict')
    
     df_inf = {
        'v1':v1, 
@@ -67,19 +50,14 @@ def run():
        'v5':v5, 
        'v6':v6,
        'v7':v7, 
-       'v8':v8, 
-       'sample_type' : st
+       'v8':v8,
+       'sample_type': sample_type
     } 
     df_inf = pd.DataFrame([df_inf])
     
     if submitted:
             
-      # Drop target
-      df_inf.drop(['target'],axis=1,inplace=True)
-
-      # Change lab 1 and lab 2
-      df_inf['sample_type'].replace(['lab 1','lab 2'],[1,2],inplace=True)
-      
+     
       # Feature Scaling
       df_inf_scaled = model_scaler.transform(df_inf)
       df_inf_scaled
